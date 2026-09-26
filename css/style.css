@@ -1,0 +1,60 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+select {
+  max-width: 100%;
+}
+
+#map {
+  height: 380px;
+  border-radius: 0.75rem;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Settings Drawer Animations */
+.drawer-backdrop {
+  transition: opacity 0.3s ease-in-out;
+}
+.drawer-panel {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Pulsing markers */
+@keyframes pulse-gate {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.gate-marker {
+  animation: pulse-gate 2s infinite ease-in-out;
+}
+
+/* Drag & Drop Highlight */
+.dropzone-active {
+  border-color: #38bdf8 !important;
+  background-color: rgba(56, 189, 248, 0.1) !important;
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="StravaGPX" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+ <metadata>
+  <name>Kingston Royal Time Trail</name>
+  <author>
+   <name>Johnny Yuen</name>
+   <link href="https://www.strava.com/athletes/8883479"/>
+  </author>
+  <copyright author="OpenStreetMap contributors">
+   <year>2020</year>
+   <license>https://www.openstreetmap.org/copyright</license>
+  </copyright>
+  <link href="https://www.strava.com/routes/3538307889513726712"/>
+ </metadata>
+ <trk>
+  <name>Kingston Royal Time Trail</name>
+  <link href="https://www.strava.com/routes/3538307889513726712"/>
+  <type>StandUpPaddling</type>
+  <trkseg>
+   <trkpt lat="51.42416000000001" lon="-0.30758">
+    <ele>4.55</ele>
+   </trkpt>
+   <trkpt lat="51.424726670022686" lon="-0.30820331792963457">
+    <ele>4.74</ele>
+   </trkpt>
+   <trkpt lat="51.42529333673965" lon="-0.3088266513180541">
+    <ele>4.68</ele>
+   </trkpt>
+   <trkpt lat="51.42586000000001" lon="-0.30945">
+    <ele>4.760000000000001</ele>
+   </trkpt>
+   <trkpt lat="51.426353341152534" lon="-0.3104099792291339">
+    <ele>4.91</ele>
+   </trkpt>
+   <trkpt lat="51.42684667446427" lon="-0.3113699791867304">
+    <ele>4.920000000000001</ele>
+   </trkpt>
+   <trkpt lat="51.42734" lon="-0.31233000000000005">
+    <ele>4.59</ele>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>

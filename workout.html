@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interval & Repeat Analyser | Workout Analyser</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-4 md:p-6 font-sans flex flex-col justify-between overflow-x-hidden">
+
+  <div>
+    <!-- Top Global Navigation Bar -->
+    <div class="max-w-7xl mx-auto mb-4 flex items-center justify-between gap-2 border-b border-slate-800/80 pb-3 text-xs">
+      <div class="flex items-center gap-1.5">
+        <a href="index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-1 whitespace-nowrap">
+          <span class="text-sm">📊</span>
+          <span>Multiple</span>
+        </a>
+        <a href="workout.html" class="px-2.5 py-1.5 rounded-lg border border-sky-500/40 bg-sky-950/60 text-sky-400 font-semibold flex items-center gap-1 shadow-sm whitespace-nowrap">
+          <span class="text-sm">🔁</span>
+          <span>Intervals</span>
+        </a>
+      </div>
+      <a href="https://buymeacoffee.com/jj1010uks" target="_blank" rel="noopener noreferrer"
+         class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1 whitespace-nowrap flex-shrink-0">
+        <span>☕</span>
+        <span class="hidden sm:inline">Buy Me a Coffee</span>
+        <span class="sm:hidden">Coffee</span>
+      </a>
+    </div>
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+          <span class="text-sky-400">🐉</span> Interval & Repeat Analyser
+        </h1>
+        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+          Single GPX Workout Telemetry | Auto-Segment Back-and-Forth Repeats against Reference Course
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto">
+        <!-- Active Route Selector Dropdown -->
+        <div class="col-span-2 sm:col-auto flex items-center bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs min-w-0">
+          <span class="text-slate-400 mr-1.5 flex-shrink-0">📍</span>
+          <select id="routeSelectDropdown" class="bg-transparent text-sky-400 font-semibold outline-none cursor-pointer truncate w-full">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Open Settings Drawer Button -->
+        <button id="openSettingsBtn" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow flex items-center justify-center gap-1.5">
+          <span>⚙️</span>
+          <span>Settings</span>
+        </button>
+
+        <!-- Load Workout GPX Button -->
+        <label class="cursor-pointer bg-sky-600 hover:bg-sky-500 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center justify-center gap-1.5">
+          <span>📂</span>
+          <span>Load GPX</span>
+          <input type="file" id="workoutFileInput" accept=".gpx" class="hidden" />
+        </label>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-5">
+
+      <!-- Active Route Quick Banner -->
+      <div id="routeBanner" class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+          <div class="truncate">
+            <span class="text-slate-400">Route:</span>
+            <span id="bannerRouteName" class="font-bold text-white ml-1 text-xs sm:text-sm">Kingston Royal Time Trail</span>
+            <span id="bannerRouteDist" class="ml-1.5 px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/60 font-medium text-[11px]">488m</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between sm:justify-end gap-2 text-slate-400 text-[11px] sm:text-xs">
+          <span id="bannerRouteEndpoints" class="truncate">Gate A (Start) ➔ Gate B (Finish)</span>
+          <button id="btnManageRoutes" class="text-sky-400 hover:text-sky-300 underline font-medium flex-shrink-0 ml-1">Manage</button>
+        </div>
+      </div>
+
+      <!-- Map & Control Grid (Always Visible) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        
+        <!-- Course Map (Always Visible) -->
+        <div class="lg:col-span-2 bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between">
+          <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+            <h2 class="font-semibold text-slate-200 text-xs tracking-wider uppercase flex items-center gap-1.5">
+              <span>Course Map</span>
+              <span id="activeMapRouteName" class="text-sky-400 font-normal truncate max-w-[120px] sm:max-w-xs"></span>
+            </h2>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] bg-emerald-950/80 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-800/60 font-medium">Gate A</span>
+              <span class="text-[10px] bg-rose-950/80 text-rose-400 px-1.5 py-0.5 rounded border border-rose-800/60 font-medium">Gate B</span>
+              <button id="btnRecenterMap" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition font-medium" title="Center map on route">
+                🎯 Recenter
+              </button>
+            </div>
+          </div>
+          <!-- Explicitly styled Map Container to guarantee visibility -->
+          <div id="map" class="w-full rounded-xl relative shadow-inner overflow-hidden border border-slate-800/60" style="height: 380px; min-height: 320px; width: 100%; z-index: 1;"></div>
+        </div>
+
+        <!-- Right Side Panel: Workout Upload Box (Pre-load) OR Splits Table (Post-load) -->
+        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl flex flex-col justify-between">
+          
+          <!-- When NO workout loaded: Upload Card -->
+          <div id="emptyStatePanel" class="space-y-5 text-center flex flex-col justify-center h-full py-4">
+            <div class="w-14 h-14 bg-sky-500/10 border border-sky-500/20 text-sky-400 rounded-2xl flex items-center justify-center mx-auto text-2xl">
+              🔁
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-base font-bold text-white">Load Workout GPX</h3>
+              <p class="text-slate-400 text-xs max-w-xs mx-auto">
+                Select a single GPX recording of repeated back-and-forth intervals along this course.
+              </p>
+            </div>
+
+            <div class="space-y-2.5 max-w-xs mx-auto w-full">
+              <label class="cursor-pointer w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                <span>📂 Choose Workout File (.gpx)</span>
+                <input type="file" id="emptyStateFileInput" accept=".gpx" class="hidden" />
+              </label>
+
+              <button id="btnLoadSampleWorkout" class="w-full bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-semibold py-2 px-4 rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                <span>⚡ Load Sample Kingston Workout</span>
+              </button>
+            </div>
+
+            <div class="border-t border-slate-800/80 pt-3 text-[11px] text-slate-500">
+              Auto-detects outbound & return laps, aligns splits, and overlays telemetry.
+            </div>
+          </div>
+
+          <!-- When workout IS loaded: Splits Table -->
+          <div id="splitsPanel" class="hidden flex flex-col justify-between h-full">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="font-semibold text-slate-200 text-xs tracking-wider uppercase">Interval Splits & Performance</h2>
+                <span class="text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/50">Green = Fastest Split</span>
+              </div>
+              <div class="overflow-x-auto custom-scrollbar max-h-80 overflow-y-auto">
+                <table class="w-full text-xs text-left text-slate-300">
+                  <thead class="text-slate-400 bg-slate-950/60 border-b border-slate-800 sticky top-0" id="workoutSplitsHeader">
+                    <!-- Populated dynamically -->
+                  </thead>
+                  <tbody id="workoutSplitsBody" class="divide-y divide-slate-800/80">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-4 p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <p class="font-medium text-sky-400">Pacing & Flow Dynamics:</p>
+              <p id="intervalGuidanceText">
+                Comparing Forward (A➔B) vs Return (B➔A) accounts for water flow and wind heading.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Telemetry Dashboard Content (Visible after workout loaded) -->
+      <div id="dashboardTelemetry" class="space-y-6 hidden">
+        
+        <!-- Filter and Lap Visibility Controls -->
+        <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-4 shadow-lg">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Filter Direction:</span>
+            <div class="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center gap-1 text-xs">
+              <button id="filterAll" class="px-3 py-1 rounded-md transition bg-sky-600 text-white font-medium">All Laps</button>
+              <button id="filterForward" class="px-3 py-1 rounded-md transition text-slate-400 hover:text-white font-medium">Forward (A➔B)</button>
+              <button id="filterReturn" class="px-3 py-1 rounded-md transition text-slate-400 hover:text-white font-medium">Return (B➔A)</button>
+            </div>
+            
+            <div class="flex items-center gap-2 ml-2">
+              <button id="btnSelectAllLaps" class="text-xs text-sky-400 hover:underline">Select All</button>
+              <span class="text-slate-600">|</span>
+              <button id="btnDeselectAllLaps" class="text-xs text-slate-400 hover:underline">Deselect All</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button id="btnExportCSV" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+              <span>📥 Export CSV</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Lap Toggle Badges -->
+          <div id="lapTogglesContainer" class="w-full flex flex-wrap gap-2 pt-2 border-t border-slate-800/80 items-center">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Summary Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="workoutMetricCards">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Comparative Telemetry Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Speed vs Distance -->
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <h3 class="font-semibold text-slate-200 text-xs tracking-wider uppercase mb-2">Boat Speed vs Interval Distance (km/h)</h3>
+            <div class="h-64">
+              <canvas id="speedChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Heart Rate Profile -->
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <h3 class="font-semibold text-slate-200 text-xs tracking-wider uppercase mb-2">Heart Rate vs Interval Distance (BPM)</h3>
+            <div class="h-64">
+              <canvas id="hrChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Pace Curve -->
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <h3 class="font-semibold text-slate-200 text-xs tracking-wider uppercase mb-2">Split Pace (Seconds per 500m)</h3>
+            <div class="h-64">
+              <canvas id="paceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Stroke Rate (Cadence) -->
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <h3 class="font-semibold text-slate-200 text-xs tracking-wider uppercase mb-2">Stroke Rate (Cadence - SPM)</h3>
+            <div class="h-64">
+              <canvas id="cadenceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Full Workout Timeline -->
+          <div class="lg:col-span-2 bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold text-slate-200 text-xs tracking-wider uppercase">Full Session Timeline (Speed & Intervals vs Time)</h3>
+              <span class="text-xs text-slate-400">Shows work bouts vs rest/turnaround recovery</span>
+            </div>
+            <div class="h-64">
+              <canvas id="timelineChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Settings & Route Management Drawer (Offcanvas) -->
+  <div id="settingsDrawerBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 drawer-backdrop"></div>
+  
+  <aside id="settingsDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-slate-900 border-l border-slate-800 z-50 shadow-2xl p-6 overflow-y-auto custom-scrollbar transform translate-x-full drawer-panel flex flex-col justify-between invisible">
+    
+    <div class="space-y-6">
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>⚙️</span> Reference Route & Settings
+          </h2>
+          <p class="text-slate-400 text-xs mt-0.5">Manage course routes and interval detection</p>
+        </div>
+        <button id="closeSettingsBtn" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 text-xl font-bold">
+          &times;
+        </button>
+      </div>
+
+      <!-- Section: Active Route Details -->
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase font-semibold text-slate-400">Current Active Route</span>
+          <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-medium">Active</span>
+        </div>
+        <div>
+          <h3 id="drawerRouteName" class="text-base font-bold text-white">Kingston Royal Time Trail</h3>
+          <div class="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-300">
+            <div>Course Length: <span id="drawerRouteDist" class="font-semibold text-white">488 m</span></div>
+            <div>Waypoints: <span id="drawerRoutePoints" class="font-semibold text-white">7 pts</span></div>
+            <div class="col-span-2 text-[11px] text-slate-400 truncate">
+              Gate A: <span id="drawerGateA">51.42416, -0.30758</span>
+            </div>
+            <div class="col-span-2 text-[11px] text-slate-400 truncate">
+              Gate B: <span id="drawerGateB">51.42734, -0.31233</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Add / Load Reference Routes (Two Ways) -->
+      <div class="space-y-3">
+        <h3 class="text-xs uppercase font-bold tracking-wider text-slate-300">Add Reference Routes</h3>
+        
+        <!-- Way 1: Upload GPX File -->
+        <div id="dropzoneRoute" class="border-2 border-dashed border-slate-700 hover:border-sky-500 rounded-xl p-4 text-center cursor-pointer transition bg-slate-950/40">
+          <div class="text-2xl mb-1">📤</div>
+          <p class="text-xs font-semibold text-slate-200">1. Upload Route GPX</p>
+          <p class="text-[11px] text-slate-400 mt-1">Select or drop reference route file(s) (<span class="text-sky-400">.gpx</span>)</p>
+          <input type="file" id="routeFileInput" accept=".gpx" multiple class="hidden" />
+        </div>
+
+        <!-- Way 2: Scan Local Directory -->
+        <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📁</span>
+            <div>
+              <p class="text-xs font-semibold text-white">2. Scan Local Directory</p>
+              <p class="text-[11px] text-slate-400">Automatically discovers all files starting with <code class="text-sky-400">rroute_*.gpx</code></p>
+            </div>
+          </div>
+          <button id="btnScanFolder" class="w-full bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-2">
+            <span>🔍 Select Directory to Scan</span>
+          </button>
+          <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden" />
+        </div>
+
+        <!-- Way 3: Sync from Server ./routes Folder -->
+        <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-base">🌐</span>
+            <div class="truncate">
+              <p class="text-xs font-semibold text-white">3. Routes in ./routes Folder</p>
+              <p class="text-[11px] text-slate-400 truncate">Auto-synced on load &bull; Click to refresh</p>
+            </div>
+          </div>
+          <button id="btnReloadServerRoutes" class="bg-sky-950 hover:bg-sky-900 text-sky-400 border border-sky-800/60 font-semibold py-1.5 px-3 rounded-lg text-xs transition flex items-center gap-1.5 flex-shrink-0">
+            <span>🔄</span>
+            <span>Sync</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section: Route Library -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs uppercase font-bold tracking-wider text-slate-300">Available Routes Library</h3>
+          <span id="routeCountBadge" class="text-[11px] text-slate-400">1 route</span>
+        </div>
+        <div id="routesListContainer" class="space-y-2 max-h-52 overflow-y-auto custom-scrollbar">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Section: Lap Detection Settings -->
+      <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-4">
+        <h3 class="text-xs uppercase font-bold tracking-wider text-slate-300">Detection Parameters</h3>
+        
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-slate-400">Gate Detection Radius:</span>
+            <span id="gateRadiusVal" class="font-semibold text-sky-400">35 m</span>
+          </div>
+          <input type="range" id="gateRadiusSlider" min="15" max="60" value="35" step="5" class="w-full accent-sky-500 cursor-pointer" />
+          <p class="text-[10px] text-slate-500 mt-1">Tolerance zone around Gate A & Gate B to detect turnaround & lap finish.</p>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-slate-400">Min Lap Distance:</span>
+            <span id="minLapDistVal" class="font-semibold text-sky-400">250 m</span>
+          </div>
+          <input type="range" id="minLapDistSlider" min="150" max="500" value="250" step="25" class="w-full accent-sky-500 cursor-pointer" />
+          <p class="text-[10px] text-slate-500 mt-1">Filters out short turns, boat adjustments, or accidental drifts.</p>
+        </div>
+
+        <button id="btnReanalyze" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2 rounded-lg text-xs transition shadow">
+          Apply & Re-analyze Workout
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="border-t border-slate-800 pt-4 mt-6 text-center">
+      <button id="btnResetDefaults" class="text-xs text-slate-400 hover:text-slate-200 underline">
+        Reset to Default (Kingston Royal Preset)
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto w-full mt-12 pt-6 border-t border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div>Workout Analyser | Interval & Repeat Telemetry Engine</div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="text-sky-400 hover:underline">Multiple Comparison (Multi-GPX)</a>
+      <a href="https://buymeacoffee.com/jj1010uks" target="_blank" rel="noopener noreferrer" 
+         class="inline-flex items-center gap-1.5 text-amber-400 hover:text-amber-300 transition font-medium">
+        <span>☕ Support on Buy Me a Coffee</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="js/workout.js"></script>
+</body>
+</html>

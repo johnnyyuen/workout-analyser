@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="workout-analyser" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Nottingham NWSC 500m</name>
+  </metadata>
+  <trk>
+    <name>Nottingham NWSC 500m</name>
+    <trkseg>
+      <trkpt lat="52.943800" lon="-1.088400"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.943290" lon="-1.089600"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.942780" lon="-1.090800"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.942270" lon="-1.092000"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.941760" lon="-1.093200"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.941250" lon="-1.094400"><ele>20.00</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

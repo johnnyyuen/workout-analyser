@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="workout-analyser" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Nottingham NWSC 200m</name>
+  </metadata>
+  <trk>
+    <name>Nottingham NWSC 200m</name>
+    <trkseg>
+      <trkpt lat="52.942250" lon="-1.092000"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.942000" lon="-1.092600"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.941750" lon="-1.093200"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.941500" lon="-1.093800"><ele>20.00</ele></trkpt>
+      <trkpt lat="52.941250" lon="-1.094400"><ele>20.00</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

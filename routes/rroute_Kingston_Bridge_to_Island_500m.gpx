@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="StravaGPX" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+ <metadata>
+  <name>Kingston Bridge to Island 500m</name>
+  <desc>From Kingston Bridge to Island, around 500m</desc>
+  <author>
+   <name>Johnny Yuen</name>
+   <link href="https://www.strava.com/athletes/8883479"/>
+  </author>
+  <copyright author="OpenStreetMap contributors">
+   <year>2020</year>
+   <license>https://www.openstreetmap.org/copyright</license>
+  </copyright>
+  <link href="https://www.strava.com/routes/3538896986488563528"/>
+ </metadata>
+ <trk>
+  <name>Kingston Bridge to Island 500m</name>
+  <desc>From Kingston Bridge to Island, around 500m</desc>
+  <link href="https://www.strava.com/routes/3538896986488563528"/>
+  <type>StandUpPaddling</type>
+  <trkseg>
+   <trkpt lat="51.41479" lon="-0.30823">
+    <ele>5.04</ele>
+   </trkpt>
+   <trkpt lat="51.415556667051476" lon="-0.3080200070413253">
+    <ele>4.82</ele>
+   </trkpt>
+   <trkpt lat="51.41632333372774" lon="-0.3078100070388426">
+    <ele>4.920000000000001</ele>
+   </trkpt>
+   <trkpt lat="51.41709" lon="-0.30760000000000004">
+    <ele>5.140000000000001</ele>
+   </trkpt>
+   <trkpt lat="51.41784666762699" lon="-0.3072666776960298">
+    <ele>4.82</ele>
+   </trkpt>
+   <trkpt lat="51.418603334308614" lon="-0.30693334435633496">
+    <ele>5.010000000000001</ele>
+   </trkpt>
+   <trkpt lat="51.419360000000005" lon="-0.30660000000000004">
+    <ele>4.78</ele>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>
