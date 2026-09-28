@@ -1615,6 +1615,27 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = '';
   });
 
+  // Drag and drop for main races files
+  const racesDropzone = document.getElementById('racesDropzone');
+  if (racesDropzone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      racesDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        racesDropzone.classList.add('border-sky-400', 'bg-sky-950/40');
+      }, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      racesDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        racesDropzone.classList.remove('border-sky-400', 'bg-sky-950/40');
+      }, false);
+    });
+    racesDropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt.files && dt.files.length > 0) handleRaceFiles(dt.files);
+    });
+  }
+
   // Demo Sample Races Button
   document.getElementById('btnLoadSampleRaces').addEventListener('click', loadSampleRaces);
 

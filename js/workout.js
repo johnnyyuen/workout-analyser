@@ -1542,6 +1542,27 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = '';
   });
 
+  // Drag and drop for main workout file
+  const workoutDropzone = document.getElementById('workoutDropzone');
+  if (workoutDropzone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      workoutDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        workoutDropzone.classList.add('border-sky-400', 'bg-sky-950/40');
+      }, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      workoutDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        workoutDropzone.classList.remove('border-sky-400', 'bg-sky-950/40');
+      }, false);
+    });
+    workoutDropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt.files && dt.files.length > 0) handleWorkoutFile(dt.files[0]);
+    });
+  }
+
   // Demo Workout Button
   document.getElementById('btnLoadSampleWorkout').addEventListener('click', loadSampleKingstonWorkout);
 
